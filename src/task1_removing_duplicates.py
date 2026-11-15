@@ -1,4 +1,5 @@
 import pandas as pd
+import math
 
 
 def remove_duplicates(df):
@@ -11,7 +12,11 @@ def remove_duplicates(df):
     Returns:
     pd.DataFrame: DataFrame with duplicates removed.
     """
-    return None
+    
+    if df is None:
+        return pd.DataFrame()
+    
+    return df.drop_duplicates()
 
 
 def drop_missing_data(df, threshold=0.5):
@@ -26,7 +31,14 @@ def drop_missing_data(df, threshold=0.5):
     pd.DataFrame: DataFrame with rows with too many missing values dropped.
     """
     
-    return None
+    if df is None or df.empty:
+        return df
+    
+    thresh_count = int(df.shape[1] * (1 - threshold))
+    if thresh_count == 0 and threshold < 1.0:
+        thresh_count = 1
+    
+    return df.dropna(thresh=thresh_count)
 
 
 # Example data
