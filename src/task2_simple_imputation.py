@@ -12,7 +12,23 @@ def impute_missing_values(df):
     pd.DataFrame: DataFrame with missing values imputed.
     """
     
-    return df
+    if df is None or df.empty:
+        return df
+    
+    df_imputed = df.copy()
+    
+    if 'A' in df_imputed.columns:
+        df_imputed['A'] = df_imputed['A'].fillna(df_imputed['A'].mean())
+        
+    if 'B' in df_imputed.columns:
+        df_imputed['B'] = df_imputed['B'].fillna(df_imputed['B'].median())
+        
+    if 'C' in df_imputed.columns:
+        mode_val = df_imputed['C'].mode()
+        if not mode_val.empty:
+            df_imputed['C'] = df_imputed['C'].fillna(mode_val[0])
+    
+    return df_imputed
 
 
 # Example data
