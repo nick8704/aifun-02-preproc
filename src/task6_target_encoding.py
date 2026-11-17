@@ -15,7 +15,19 @@ def target_encode_smoothing(df, column, target, k):
     pd.DataFrame: DataFrame with an additional encoded column.
     """
     
-    return df
+    if df is None or df.empty or column not in df.columns or target not in df.columns:
+        return df
+    
+    df_encoded = df.copy()
+    global_mean = df_encoded[target].mean()
+    stats = df_encoded.groupby(column)[target].agg(['count', 'mean'])
+    counts = stats['count']
+    means = stats['mean']
+    smoothed_means = (counts * means + k * global_mean) / (counts + k)
+    encoded_col_name = f"{column}_encoded"
+    df_encoded[encoded_col_name] = df_encoded[column].map(smoothed_means)
+    
+    return df_encoded
 
 
 # Example data
