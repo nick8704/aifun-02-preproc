@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 def calculate_bmi(df):
@@ -11,8 +12,16 @@ def calculate_bmi(df):
     Returns:
     pd.DataFrame: DataFrame with an additional 'BMI' column.
     """
+    
+    if df is None or df.empty:
+        return df
+    
+    df_bmi = df.copy()
+    
+    if 'height' in df_bmi.columns and 'weight' in df_bmi.columns:
+        df_bmi['BMI'] = df_bmi['weight'] / (df_bmi['height'] ** 2)
 
-    return df
+    return df_bmi
 
 
 def categorize_bmi(df):
@@ -25,8 +34,25 @@ def categorize_bmi(df):
     Returns:
     pd.DataFrame: DataFrame with an additional 'BMI_category' column.
     """
+    
+    if df is None or df.empty:
+        return df
+    
+    df_cat = df.copy()
+    
+    if 'BMI' in df_cat.columns:
+        conditions = [
+            df_cat['BMI'] < 18.5,
+            (df_cat['BMI'] >= 18.5) & (df_cat['BMI'] < 25),
+            (df_cat['BMI'] >= 25) & (df_cat['BMI'] < 30),
+            df_cat['BMI'] >= 30
+        ]
+        
+        choises = ['Underweight', 'Normal weight', 'Overweight', 'Obese']
+        
+        df_cat['BMI_category'] = np.select(conditions, choises, default=None)
 
-    return df
+    return df_cat
 
 
 # Example data
